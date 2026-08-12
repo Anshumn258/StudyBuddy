@@ -1,5 +1,5 @@
 // Replace with your Render Backend Web Service URL once deployed
-const BACKEND_URL = "https://your-studybuddy-backend.onrender.com/api/chat";
+const BACKEND_URL = "https://studybuddy-backend-m8ov.onrender.com";
 
 function toggleSidebar() {
     document.getElementById("sidebar").classList.toggle("collapsed");
