@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyBuddy - AI Study Assistant</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+
+    <header class="top-ribbon">
+        <div class="logo-section">
+            <button id="toggle-sidebar-btn" onclick="toggleSidebar()">☰</button>
+            <h1>StudyBuddy 📚</h1>
+        </div>
+        <div class="ribbon-right">
+            <span id="status-indicator">● Online</span>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Menu & Filters</h2>
+            </div>
+
+            <div class="menu-group">
+                <label for="board-select">Board</label>
+                <select id="board-select">
+                    <option value="CBSE">CBSE</option>
+                    <option value="State Board">State Board</option>
+                    <option value="All">All Sources</option>
+                </select>
+
+                <label for="class-select">Class / Grade</label>
+                <select id="class-select">
+                    <option value="10">Class 10</option>
+                    <option value="11">Class 11</option>
+                    <option value="12">Class 12</option>
+                    <option value="1-9">Class 1 - 9</option>
+                </select>
+            </div>
+
+            <hr class="sidebar-divider">
+
+            <div class="menu-group">
+                <label for="language-select">🌐 Language</label>
+                <select id="language-select">
+                    <option value="English">English</option>
+                    <option value="Hindi">Hindi</option>
+                    <option value="Hinglish">Hinglish</option>
+                </select>
+
+                <label for="theme-select">🎨 Theme</label>
+                <select id="theme-select" onchange="changeTheme()">
+                    <option value="light">Light (Default)</option>
+                    <option value="dark">Dark Mode</option>
+                </select>
+
+                <label for="settings-opt">⚙️ Settings</label>
+                <button class="menu-btn" onclick="openSettings()">Manage Notes / Storage</button>
+            </div>
+        </aside>
+
+        <main class="chat-wrapper">
+            <div id="chat-box" class="chat-box">
+                <div class="message bot-message">
+                    👋 Hello! I am <strong>StudyBuddy</strong>. Ask me any question from your CBSE/State Board syllabus, or upload your personal notes to study!
+                </div>
+            </div>
+
+            <div id="loading-spinner" class="loading-spinner hidden">
+                ⏳ StudyBuddy is thinking... <i>(If idle, server takes ~30s to wake up)</i>
+            </div>
+
+            <div class="input-container">
+                <label for="file-upload" class="file-upload-label" title="Upload PDF or Image">📎</label>
+                <input type="file" id="file-upload" accept="image/*,.pdf" onchange="handleFileSelect()">
+                <span id="file-name-display" class="file-name-display"></span>
+                
+                <input type="text" id="user-input" placeholder="Ask a question or request notes..." onkeydown="if(event.key==='Enter') sendMessage()">
+                <button id="send-btn" onclick="sendMessage()">Send</button>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
