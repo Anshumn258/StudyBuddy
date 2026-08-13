@@ -1,7 +1,8 @@
+import os
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from google import genai
-import os
+from google.genai import types
 
 app = FastAPI(title="StudyBuddy Backend")
 
@@ -18,9 +19,11 @@ app.add_middleware(
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 client = genai.Client(api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
 
+
 @app.get("/")
 def home():
     return {"message": "StudyBuddy Server is Running!"}
+
 
 @app.post("/api/chat")
 async def chat_endpoint(
@@ -31,7 +34,7 @@ async def chat_endpoint(
     file: UploadFile = File(None)
 ):
     if not client:
-        return {"reply": "Server configuration error: API key missing."}
+        return {"reply": "Server configuration error: GEMINI_API_KEY environment variable missing on Render."}
 
     # Construct System Prompt to ground the AI as a tutor
     system_prompt = (
@@ -46,20 +49,25 @@ async def chat_endpoint(
     contents = [system_prompt]
 
     # Process file input (images/PDFs) if uploaded by student
-    if file:
+    if file and file.filename:
         file_bytes = await file.read()
-        contents.append({
-            "mime_type": file.content_type,
-            "data": file_bytes
-        })
+        mime_type = file.content_type or "image/png"
+        
+        # Proper file structure for google-genai SDK
+        file_part = types.Part.from_bytes(
+            data=file_bytes,
+            mime_type=mime_type
+        )
+        contents.append(file_part)
 
     contents.append(query if query else "Explain the key concepts in this uploaded material.")
 
     try:
         response = client.models.generate_content(
-            model="gemini-1.5-flash",
+            model="gemini-2.5-flash",  # Upgraded to current recommended model
             contents=contents
         )
         return {"reply": response.text}
     except Exception as e:
+        print(f"Gemini API Error: {str(e)}")
         return {"reply": f"An error occurred while generating the solution: {str(e)}"}
