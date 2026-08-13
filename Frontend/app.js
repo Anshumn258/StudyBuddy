@@ -1,4 +1,3 @@
-// Replace with your Render Backend Web Service URL once deployed
 const BACKEND_URL = "https://studybuddy-backend-m8ov.onrender.com";
 
 function toggleSidebar() {
@@ -45,15 +44,17 @@ async function sendMessage() {
     spinner.classList.remove("hidden");
 
     try {
-        const response = await fetch(BACKEND_URL, {
+        // FIXED: Sending request specifically to /api/chat endpoint
+        const response = await fetch(`${BACKEND_URL}/api/chat`, {
             method: "POST",
             body: formData
         });
 
         const data = await response.json();
         
-        // Parse markdown and math using Marked.js & KaTeX
-        const formattedReply = marked.parse(data.reply || "No response generated.");
+        // Parse markdown and math
+        const rawReply = data.reply || "No response generated.";
+        const formattedReply = marked.parse(rawReply);
         appendMessage(formattedReply, "bot-message");
 
     } catch (error) {
@@ -72,20 +73,50 @@ function appendMessage(content, className) {
     msgDiv.className = `message ${className}`;
     msgDiv.innerHTML = content;
     chatBox.appendChild(msgDiv);
+    
+    // Auto-render KaTeX math formulas if available
+    if (window.renderMathInElement) {
+        renderMathInElement(msgDiv, {
+            delimiters: [
+                {left: "$$", right: "$$", display: true},
+                {left: "$", right: "$", display: false}
+            ]
+        });
+    }
+
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
+/* Dark Theme Toggle Logic */
 function changeTheme() {
     const theme = document.getElementById("theme-select").value;
     if (theme === "dark") {
-        document.body.style.backgroundColor = "#1a1a1a";
-        document.body.style.color = "#ffffff";
+        document.body.classList.add("dark-mode");
     } else {
-        document.body.style.backgroundColor = "#ffffff";
-        document.body.style.color = "#000000";
+        document.body.classList.remove("dark-mode");
     }
 }
 
+/* Modal / Settings Dialog Logic */
 function openSettings() {
-    alert("Settings & Personal Notes Library management window.");
+    const modal = document.getElementById("settings-modal");
+    modal.classList.remove("hidden");
+    
+    // Calculate simple storage status
+    const storageStatus = document.getElementById("storage-status");
+    const usedBytes = JSON.stringify(localStorage).length;
+    storageStatus.textContent = `Local storage used: ${(usedBytes / 1024).toFixed(2)} KB`;
+}
+
+function closeSettings() {
+    const modal = document.getElementById("settings-modal");
+    modal.classList.add("hidden");
+}
+
+function clearNotesStorage() {
+    if (confirm("Are you sure you want to clear cached notes and chat history?")) {
+        localStorage.clear();
+        alert("Storage cleared successfully!");
+        closeSettings();
+    }
 }

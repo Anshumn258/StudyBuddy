@@ -13,11 +13,12 @@ body {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 /* 1. Light Blue Top Ribbon */
 .top-ribbon {
-    background-color: #87CEEB; /* Light Sky Blue */
+    background-color: #87CEEB;
     color: #002b49;
     height: 55px;
     display: flex;
@@ -57,7 +58,7 @@ body {
 /* 3. Black Sidebar */
 .sidebar {
     width: 260px;
-    background-color: #121212; /* Deep Black */
+    background-color: #121212;
     color: #ffffff;
     padding: 20px;
     display: flex;
@@ -97,6 +98,10 @@ body {
     cursor: pointer;
 }
 
+.menu-btn:hover {
+    background-color: #333333;
+}
+
 .sidebar-divider {
     border: 0;
     border-top: 1px solid #333333;
@@ -111,6 +116,7 @@ body {
     flex-direction: column;
     padding: 20px;
     position: relative;
+    transition: background-color 0.3s;
 }
 
 .chat-box {
@@ -133,14 +139,14 @@ body {
 
 .user-message {
     align-self: flex-end;
-    background-color: #e3f2fd; /* Soft Blue tint for User */
+    background-color: #e3f2fd;
     color: #000000;
     border-bottom-right-radius: 2px;
 }
 
 .bot-message {
     align-self: flex-start;
-    background-color: #f5f5f5; /* Light gray for Bot */
+    background-color: #f5f5f5;
     color: #000000;
     border: 1px solid #e0e0e0;
     border-bottom-left-radius: 2px;
@@ -162,6 +168,8 @@ body {
     border-radius: 6px;
     font-size: 0.95rem;
     outline: none;
+    background-color: #ffffff;
+    color: #000000;
 }
 
 .input-container input[type="file"] {
@@ -202,5 +210,146 @@ body {
 }
 
 .hidden {
-    display: none;
+    display: none !important;
+}
+
+/* ==========================================
+   DARK THEME STYLING
+   ========================================== */
+body.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+body.dark-mode .top-ribbon {
+    background-color: #1f2937;
+    color: #87CEEB;
+}
+
+body.dark-mode #toggle-sidebar-btn {
+    color: #87CEEB;
+}
+
+body.dark-mode .chat-wrapper {
+    background-color: #1a1a1a;
+}
+
+body.dark-mode .bot-message {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+    border-color: #333333;
+}
+
+body.dark-mode .user-message {
+    background-color: #004d40;
+    color: #ffffff;
+}
+
+body.dark-mode .input-container {
+    border-top-color: #333333;
+}
+
+body.dark-mode .input-container input[type="text"] {
+    background-color: #2a2a2a;
+    color: #ffffff;
+    border-color: #444444;
+}
+
+body.dark-mode .file-upload-label {
+    background-color: #333333;
+    color: #ffffff;
+}
+
+/* ==========================================
+   MODAL POPUP STYLING
+   ========================================== */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+.modal-content {
+    background-color: #ffffff;
+    color: #000000;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .modal-content {
+    background-color: #222222;
+    color: #ffffff;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+}
+
+body.dark-mode .modal-header {
+    border-bottom-color: #444;
+}
+
+.close-btn {
+    font-size: 1.5rem;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.modal-body {
+    padding: 15px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.storage-box {
+    background-color: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    padding: 15px;
+    border-radius: 6px;
+}
+
+body.dark-mode .storage-box {
+    background-color: #1a1a1a;
+    border-color: #333;
+}
+
+.danger-btn {
+    background-color: #d32f2f;
+    color: #ffffff;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.danger-btn:hover {
+    background-color: #b71c1c;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+}
+
+body.dark-mode .modal-footer {
+    border-top-color: #444;
 }

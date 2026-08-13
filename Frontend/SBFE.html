@@ -8,6 +8,7 @@
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
@@ -33,6 +34,7 @@
                 <select id="board-select">
                     <option value="CBSE">CBSE</option>
                     <option value="State Board">State Board</option>
+                    <option value="ICSE">ICSE / ISC</option>
                     <option value="All">All Sources</option>
                 </select>
 
@@ -51,8 +53,19 @@
                 <label for="language-select">🌐 Language</label>
                 <select id="language-select">
                     <option value="English">English</option>
-                    <option value="Hindi">Hindi</option>
-                    <option value="Hinglish">Hinglish</option>
+                    <option value="Hinglish">Hinglish (Hindi + English)</option>
+                    <option value="Hindi">Hindi (हिंदी)</option>
+                    <option value="Marathi">Marathi (मराठी)</option>
+                    <option value="Bengali">Bengali (বাংলা)</option>
+                    <option value="Tamil">Tamil (தமிழ்)</option>
+                    <option value="Telugu">Telugu (తెలుగు)</option>
+                    <option value="Gujarati">Gujarati (ગુજરાતી)</option>
+                    <option value="Kannada">Kannada (ಕನ್ನಡ)</option>
+                    <option value="Malayalam">Malayalam (മലയാളം)</option>
+                    <option value="Punjabi">Punjabi (ਪੰਜਾਬੀ)</option>
+                    <option value="Odia">Odia (ଓଡ଼ିଆ)</option>
+                    <option value="Assamese">Assamese (অসমীয়া)</option>
+                    <option value="Urdu">Urdu (اُردُو)</option>
                 </select>
 
                 <label for="theme-select">🎨 Theme</label>
@@ -74,7 +87,7 @@
             </div>
 
             <div id="loading-spinner" class="loading-spinner hidden">
-                ⏳ StudyBuddy is thinking... <i>(If idle, server takes ~30s to wake up)</i>
+                ⏳ StudyBuddy is thinking... <i>(If idle, server takes ~20s to wake up)</i>
             </div>
 
             <div class="input-container">
@@ -86,6 +99,27 @@
                 <button id="send-btn" onclick="sendMessage()">Send</button>
             </div>
         </main>
+    </div>
+
+    <div id="settings-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📁 Notes & Storage Management</h3>
+                <span class="close-btn" onclick="closeSettings()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Manage your saved notes, personal study material, and cached chat storage here.</p>
+                
+                <div class="storage-box">
+                    <h4>Saved Notes Storage</h4>
+                    <p id="storage-status">Checking storage usage...</p>
+                    <button class="danger-btn" onclick="clearNotesStorage()">Clear Saved Chat & Cache</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="menu-btn" onclick="closeSettings()">Close</button>
+            </div>
+        </div>
     </div>
 
     <script src="app.js"></script>
