@@ -1,41 +1,4 @@
-// Ensure backend endpoint targets /api/chat
 const BACKEND_URL = "https://studybuddy-backend-m8ov.onrender.com";
-
-// Wait until the HTML page is 100% loaded before running any script
-document.addEventListener("DOMContentLoaded", () => {
-    console.log("StudyBuddy JS successfully loaded!");
-
-    // Set up button listeners safely
-    const sendBtn = document.getElementById("send-btn");
-    const userInput = document.getElementById("user-input");
-    const themeSelect = document.getElementById("theme-select");
-    const toggleSidebarBtn = document.getElementById("toggle-sidebar-btn");
-    const fileUploadInput = document.getElementById("file-upload");
-
-    if (sendBtn) {
-        sendBtn.addEventListener("click", sendMessage);
-    }
-
-    if (userInput) {
-        userInput.addEventListener("keydown", (event) => {
-            if (event.key === "Enter") {
-                sendMessage();
-            }
-        });
-    }
-
-    if (themeSelect) {
-        themeSelect.addEventListener("change", changeTheme);
-    }
-
-    if (toggleSidebarBtn) {
-        toggleSidebarBtn.addEventListener("click", toggleSidebar);
-    }
-
-    if (fileUploadInput) {
-        fileUploadInput.addEventListener("change", handleFileSelect);
-    }
-});
 
 function toggleSidebar() {
     const sidebar = document.getElementById("sidebar");
@@ -79,13 +42,10 @@ async function sendMessage() {
     const grade = classSelect ? classSelect.value : "10";
     const language = langSelect ? langSelect.value : "English";
 
-    // Stop if input and file are both empty
     if (!query && (!fileInput || fileInput.files.length === 0)) return;
 
-    // Temporarily disable send button to avoid spam clicking
     if (sendBtn) sendBtn.disabled = true;
 
-    // Display user message in chat window
     appendMessage(query || "Uploaded file for analysis", "user-message");
     if (inputField) inputField.value = "";
 
@@ -102,7 +62,8 @@ async function sendMessage() {
     if (spinner) spinner.classList.remove("hidden");
 
     try {
-        const response = await fetch(`${BACKEND_URL}/api/chat`, {
+        // FIXED TEMPLATE EXPRESSION:
+        const response = await fetch(BACKEND_URL + "/api/chat", {
             method: "POST",
             body: formData
         });
@@ -111,7 +72,6 @@ async function sendMessage() {
         
         let replyText = data.reply || "No response generated.";
         
-        // Convert Markdown response to HTML if library loaded
         if (window.marked && typeof window.marked.parse === "function") {
             replyText = window.marked.parse(replyText);
         }
@@ -120,7 +80,7 @@ async function sendMessage() {
 
     } catch (error) {
         console.error("Error connecting to backend:", error);
-        appendMessage("⚠️ Connection error. Please verify backend server on Render is active.", "bot-message");
+        appendMessage("⚠️ Connection error. Please make sure the backend on Render is active.", "bot-message");
     } finally {
         if (spinner) spinner.classList.add("hidden");
         if (sendBtn) sendBtn.disabled = false;
@@ -135,11 +95,10 @@ function appendMessage(content, className) {
     if (!chatBox) return;
 
     const msgDiv = document.createElement("div");
-    msgDiv.className = `message ${className}`;
+    msgDiv.className = "message " + className;
     msgDiv.innerHTML = content;
     chatBox.appendChild(msgDiv);
 
-    // Render KaTeX Math Formulas if present
     if (window.renderMathInElement) {
         try {
             renderMathInElement(msgDiv, {
@@ -163,7 +122,7 @@ function openSettings() {
         const storageStatus = document.getElementById("storage-status");
         if (storageStatus) {
             const bytes = JSON.stringify(localStorage).length;
-            storageStatus.textContent = `Local Storage Used: ${(bytes / 1024).toFixed(2)} KB`;
+            storageStatus.textContent = "Local Storage Used: " + (bytes / 1024).toFixed(2) + " KB";
         }
     }
 }
