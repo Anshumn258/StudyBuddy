@@ -74,20 +74,20 @@
                     <option value="dark">Dark Mode</option>
                 </select>
 
-                <label for="settings-opt">⚙️ Settings</label>
-                <button class="menu-btn" onclick="openSettings()">Manage Notes / Storage</button>
+                <label>⚙️ Settings</label>
+                <button type="button" class="menu-btn" onclick="openSettings()">Manage Notes / Storage</button>
             </div>
         </aside>
 
         <main class="chat-wrapper">
             <div id="chat-box" class="chat-box">
                 <div class="message bot-message">
-                    👋 Hello! I am <strong>StudyBuddy</strong>. Ask me any question from your CBSE/State Board syllabus, or upload your personal notes to study!
+                    👋 Hello! I am <strong>StudyBuddy</strong>. Ask me any question from your CBSE or State Board syllabus!
                 </div>
             </div>
 
             <div id="loading-spinner" class="loading-spinner hidden">
-                ⏳ StudyBuddy is thinking... <i>(If idle, server takes ~20s to wake up)</i>
+                ⏳ StudyBuddy is thinking... <i>(Free backend takes ~20s to wake up if idle)</i>
             </div>
 
             <div class="input-container">
@@ -108,16 +108,15 @@
                 <span class="close-btn" onclick="closeSettings()">&times;</span>
             </div>
             <div class="modal-body">
-                <p>Manage your saved notes, personal study material, and cached chat storage here.</p>
-                
+                <p>Manage cached study materials and browser local storage here.</p>
                 <div class="storage-box">
-                    <h4>Saved Notes Storage</h4>
+                    <h4>Cache & Storage Status</h4>
                     <p id="storage-status">Checking storage usage...</p>
-                    <button class="danger-btn" onclick="clearNotesStorage()">Clear Saved Chat & Cache</button>
+                    <button type="button" class="danger-btn" onclick="clearNotesStorage()">Clear Cached Notes</button>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="menu-btn" onclick="closeSettings()">Close</button>
+                <button type="button" class="menu-btn" onclick="closeSettings()">Close</button>
             </div>
         </div>
     </div>

@@ -1,50 +1,56 @@
 const BACKEND_URL = "https://studybuddy-backend-m8ov.onrender.com";
 
 function toggleSidebar() {
-    document.getElementById("sidebar").classList.toggle("collapsed");
+    const sidebar = document.getElementById("sidebar");
+    if (sidebar) sidebar.classList.toggle("collapsed");
 }
 
 function handleFileSelect() {
     const fileInput = document.getElementById("file-upload");
     const nameDisplay = document.getElementById("file-name-display");
-    if (fileInput.files.length > 0) {
+    if (fileInput && fileInput.files.length > 0) {
         nameDisplay.textContent = fileInput.files[0].name;
-    } else {
+    } else if (nameDisplay) {
         nameDisplay.textContent = "";
     }
 }
 
 async function sendMessage() {
     const inputField = document.getElementById("user-input");
-    const query = inputField.value.trim();
-    const board = document.getElementById("board-select").value;
-    const grade = document.getElementById("class-select").value;
-    const language = document.getElementById("language-select").value;
+    const boardSelect = document.getElementById("board-select");
+    const classSelect = document.getElementById("class-select");
+    const langSelect = document.getElementById("language-select");
     const fileInput = document.getElementById("file-upload");
+    const sendBtn = document.getElementById("send-btn");
+    const spinner = document.getElementById("loading-spinner");
 
-    if (!query && fileInput.files.length === 0) return;
+    const query = inputField ? inputField.value.trim() : "";
+    const board = boardSelect ? boardSelect.value : "CBSE";
+    const grade = classSelect ? classSelect.value : "10";
+    const language = langSelect ? langSelect.value : "English";
 
-    // Append User Message to UI
+    if (!query && (!fileInput || fileInput.files.length === 0)) return;
+
+    // Prevent double clicking while waiting for response
+    if (sendBtn) sendBtn.disabled = true;
+
+    // Display user query in chat UI
     appendMessage(query || "Uploaded file for analysis", "user-message");
-    inputField.value = "";
+    if (inputField) inputField.value = "";
 
-    // Prepare Form Data payload
     const formData = new FormData();
     formData.append("query", query);
     formData.append("board", board);
     formData.append("class", grade);
     formData.append("language", language);
 
-    if (fileInput.files.length > 0) {
+    if (fileInput && fileInput.files.length > 0) {
         formData.append("file", fileInput.files[0]);
     }
 
-    // Show Loading Spinner for Render Cold Starts
-    const spinner = document.getElementById("loading-spinner");
-    spinner.classList.remove("hidden");
+    if (spinner) spinner.classList.remove("hidden");
 
     try {
-        // FIXED: Sending request specifically to /api/chat endpoint
         const response = await fetch(`${https://studybuddy-backend-m8ov.onrender.com}/api/chat`, {
             method: "POST",
             body: formData
@@ -52,106 +58,85 @@ async function sendMessage() {
 
         const data = await response.json();
         
-        // Parse markdown and math
-        const rawReply = data.reply || "No response generated.";
-        const formattedReply = marked.parse(rawReply);
-        appendMessage(formattedReply, "bot-message");
+        let replyText = data.reply || "No response generated.";
+        
+        // Parse markdown if marked library exists
+        if (window.marked && typeof window.marked.parse === "function") {
+            replyText = window.marked.parse(replyText);
+        }
+        
+        appendMessage(replyText, "bot-message");
 
     } catch (error) {
         console.error("Error connecting to backend:", error);
         appendMessage("⚠️ Connection error. If the free backend server was sleeping, please try again in 20 seconds.", "bot-message");
     } finally {
-        spinner.classList.add("hidden");
-        fileInput.value = "";
-        document.getElementById("file-name-display").textContent = "";
+        if (spinner) spinner.classList.add("hidden");
+        if (sendBtn) sendBtn.disabled = false;
+        if (fileInput) fileInput.value = "";
+        const nameDisplay = document.getElementById("file-name-display");
+        if (nameDisplay) nameDisplay.textContent = "";
     }
 }
 
 function appendMessage(content, className) {
     const chatBox = document.getElementById("chat-box");
+    if (!chatBox) return;
+
     const msgDiv = document.createElement("div");
     msgDiv.className = `message ${className}`;
     msgDiv.innerHTML = content;
     chatBox.appendChild(msgDiv);
-    
-    // Auto-render KaTeX math formulas if available
+
+    // Render KaTeX Math Formulas if available
     if (window.renderMathInElement) {
-        renderMathInElement(msgDiv, {
-            delimiters: [
-                {left: "$$", right: "$$", display: true},
-                {left: "$", right: "$", display: false}
-            ]
-        });
+        try {
+            renderMathInElement(msgDiv, {
+                delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "$", right: "$", display: false}
+                ]
+            });
+        } catch (e) {
+            console.warn("KaTeX render issue:", e);
+        }
     }
 
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-/* Dark Theme Override Rules */
-body.dark-mode {
-    background-color: #121212 !important;
-    color: #ffffff !important;
+function changeTheme() {
+    const themeSelect = document.getElementById("theme-select");
+    if (!themeSelect) return;
+
+    if (themeSelect.value === "dark") {
+        document.body.classList.add("dark-mode");
+    } else {
+        document.body.classList.remove("dark-mode");
+    }
 }
 
-body.dark-mode .top-ribbon {
-    background-color: #1f2937 !important;
-    color: #87CEEB !important;
-}
-
-body.dark-mode #toggle-sidebar-btn {
-    color: #87CEEB !important;
-}
-
-body.dark-mode .chat-wrapper {
-    background-color: #1a1a1a !important;
-}
-
-body.dark-mode .bot-message {
-    background-color: #2a2a2a !important;
-    color: #e0e0e0 !important;
-    border-color: #333333 !important;
-}
-
-body.dark-mode .user-message {
-    background-color: #004d40 !important;
-    color: #ffffff !important;
-}
-
-body.dark-mode .input-container {
-    border-top-color: #333333 !important;
-}
-
-body.dark-mode .input-container input[type="text"] {
-    background-color: #2a2a2a !important;
-    color: #ffffff !important;
-    border-color: #444444 !important;
-}
-
-body.dark-mode .file-upload-label {
-    background-color: #333333 !important;
-    color: #ffffff !important;
-}
-
-/* Modal / Settings Dialog Logic */
 function openSettings() {
     const modal = document.getElementById("settings-modal");
-    modal.classList.remove("hidden");
-    
-    // Calculate simple storage status
-    const storageStatus = document.getElementById("storage-status");
-    const usedBytes = JSON.stringify(localStorage).length;
-    storageStatus.textContent = `Local storage used: ${(usedBytes / 1024).toFixed(2)} KB`;
+    if (modal) {
+        modal.classList.remove("hidden");
+        const storageStatus = document.getElementById("storage-status");
+        if (storageStatus) {
+            const bytes = JSON.stringify(localStorage).length;
+            storageStatus.textContent = `Local Storage Used: ${(bytes / 1024).toFixed(2)} KB`;
+        }
+    }
 }
 
 function closeSettings() {
     const modal = document.getElementById("settings-modal");
-    modal.classList.add("hidden");
+    if (modal) modal.classList.add("hidden");
 }
 
 function clearNotesStorage() {
-    if (confirm("Are you sure you want to clear cached notes and chat history?")) {
+    if (confirm("Are you sure you want to clear cached study notes?")) {
         localStorage.clear();
-        alert("Storage cleared successfully!");
+        alert("Cache cleared!");
         closeSettings();
     }
 }
