@@ -51,7 +51,7 @@ async function sendMessage() {
     if (spinner) spinner.classList.remove("hidden");
 
     try {
-        const response = await fetch(`${https://studybuddy-backend-m8ov.onrender.com}/api/chat`, {
+        const response = await fetch(`${BACKEND_URL}/api/chat`, {
             method: "POST",
             body: formData
         });
