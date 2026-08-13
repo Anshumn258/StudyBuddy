@@ -62,7 +62,7 @@ async function sendMessage() {
     if (spinner) spinner.classList.remove("hidden");
 
     try {
-        // FIXED TEMPLATE EXPRESSION:
+        // Concatenating BACKEND_URL with /api/chat safely
         const response = await fetch(BACKEND_URL + "/api/chat", {
             method: "POST",
             body: formData
