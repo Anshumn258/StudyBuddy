@@ -45,7 +45,7 @@ async function sendMessage() {
 
     try {
         // FIXED: Sending request specifically to /api/chat endpoint
-        const response = await fetch(`${BACKEND_URL}/api/chat`, {
+        const response = await fetch(`${https://studybuddy-backend-m8ov.onrender.com}/api/chat`, {
             method: "POST",
             body: formData
         });
@@ -87,14 +87,49 @@ function appendMessage(content, className) {
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-/* Dark Theme Toggle Logic */
-function changeTheme() {
-    const theme = document.getElementById("theme-select").value;
-    if (theme === "dark") {
-        document.body.classList.add("dark-mode");
-    } else {
-        document.body.classList.remove("dark-mode");
-    }
+/* Dark Theme Override Rules */
+body.dark-mode {
+    background-color: #121212 !important;
+    color: #ffffff !important;
+}
+
+body.dark-mode .top-ribbon {
+    background-color: #1f2937 !important;
+    color: #87CEEB !important;
+}
+
+body.dark-mode #toggle-sidebar-btn {
+    color: #87CEEB !important;
+}
+
+body.dark-mode .chat-wrapper {
+    background-color: #1a1a1a !important;
+}
+
+body.dark-mode .bot-message {
+    background-color: #2a2a2a !important;
+    color: #e0e0e0 !important;
+    border-color: #333333 !important;
+}
+
+body.dark-mode .user-message {
+    background-color: #004d40 !important;
+    color: #ffffff !important;
+}
+
+body.dark-mode .input-container {
+    border-top-color: #333333 !important;
+}
+
+body.dark-mode .input-container input[type="text"] {
+    background-color: #2a2a2a !important;
+    color: #ffffff !important;
+    border-color: #444444 !important;
+}
+
+body.dark-mode .file-upload-label {
+    background-color: #333333 !important;
+    color: #ffffff !important;
 }
 
 /* Modal / Settings Dialog Logic */
