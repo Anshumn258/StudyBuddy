@@ -3,6 +3,7 @@ from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from google import genai
 from google.genai import types
+import uvicorn
 
 app = FastAPI(title="StudyBuddy Backend")
 
@@ -71,3 +72,8 @@ async def chat_endpoint(
     except Exception as e:
         print(f"Gemini API Error: {str(e)}")
         return {"reply": f"An error occurred while generating the solution: {str(e)}"}
+
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 10000))
+    uvicorn.run("SBBE:app", host="0.0.0.0", port=port, reload=False)
