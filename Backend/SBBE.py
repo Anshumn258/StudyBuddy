@@ -10,20 +10,26 @@ app = FastAPI(title="StudyBuddy Backend")
 # Enable CORS for GitHub Pages frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows requests from your GitHub Pages URL
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Initialize Gemini Client using Environment Variable GEMINI_API_KEY
+# Initialize Gemini Client using Environment Variable
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 client = genai.Client(api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
 
 
 @app.get("/")
 def home():
-    return {"message": "StudyBuddy Server is Running!"}
+    return {"status": "ok", "message": "StudyBuddy Server is Running!"}
+
+
+@app.head("/")
+def head_home():
+    # Handles automated HEAD health checks on Render without 405 errors
+    return {"status": "ok"}
 
 
 @app.post("/api/chat")
@@ -37,7 +43,6 @@ async def chat_endpoint(
     if not client:
         return {"reply": "Server configuration error: GEMINI_API_KEY environment variable missing on Render."}
 
-    # Construct System Prompt to ground the AI as a tutor
     system_prompt = (
         f"You are StudyBuddy, an expert educational assistant for Indian school curricula.\n"
         f"Target Board: {board}\n"
@@ -49,12 +54,10 @@ async def chat_endpoint(
 
     contents = [system_prompt]
 
-    # Process file input (images/PDFs) if uploaded by student
     if file and file.filename:
         file_bytes = await file.read()
         mime_type = file.content_type or "image/png"
         
-        # Proper file structure for google-genai SDK
         file_part = types.Part.from_bytes(
             data=file_bytes,
             mime_type=mime_type
@@ -65,7 +68,7 @@ async def chat_endpoint(
 
     try:
         response = client.models.generate_content(
-            model="gemini-2.5-flash",  # Upgraded to current recommended model
+            model="gemini-1.5-flash",
             contents=contents
         )
         return {"reply": response.text}
@@ -76,4 +79,4 @@ async def chat_endpoint(
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
-    uvicorn.run("SBBE:app", host="0.0.0.0", port=port, reload=False)
+    uvicorn.run(app, host="0.0.0.0", port=port)

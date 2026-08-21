@@ -1,4 +1,4 @@
-const BACKEND_URL = "https://studybuddy-backend-m8ov.onrender.com";
+const BACKEND_URL = "https://studybuddy-95aw.onrender.com";
 
 function toggleSidebar() {
     const sidebar = document.getElementById("sidebar");
@@ -62,25 +62,37 @@ async function sendMessage() {
     if (spinner) spinner.classList.remove("hidden");
 
     try {
-        // Line 54 FIXED:
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 60000);
+
         const response = await fetch(BACKEND_URL + "/api/chat", {
             method: "POST",
-            body: formData
+            body: formData,
+            signal: controller.signal
         });
 
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+            throw new Error(`HTTP Error status: ${response.status}`);
+        }
+
         const data = await response.json();
-        
         let replyText = data.reply || "No response generated.";
-        
+
         if (window.marked && typeof window.marked.parse === "function") {
             replyText = window.marked.parse(replyText);
         }
-        
+
         appendMessage(replyText, "bot-message");
 
     } catch (error) {
         console.error("Error connecting to backend:", error);
-        appendMessage("⚠️ Connection error. Please make sure the backend on Render is active.", "bot-message");
+        let errorMsg = "⚠️ Connection error. Please make sure the backend on Render is active.";
+        if (error.name === 'AbortError') {
+            errorMsg = "⏳ The server took over 60s to wake up from idle mode. Please click Send again!";
+        }
+        appendMessage(errorMsg, "bot-message");
     } finally {
         if (spinner) spinner.classList.add("hidden");
         if (sendBtn) sendBtn.disabled = false;

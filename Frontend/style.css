@@ -50,6 +50,7 @@ body {
     display: flex;
     flex: 1;
     height: calc(100vh - 55px);
+    overflow: hidden;
 }
 
 .sidebar {
@@ -251,7 +252,7 @@ body.dark-mode .file-upload-label {
     color: #ffffff !important;
 }
 
-/* Modal Popup Window */
+/* Modal Window */
 .modal {
     position: fixed;
     top: 0;
@@ -286,6 +287,11 @@ body.dark-mode .modal-content {
     align-items: center;
     border-bottom: 1px solid #ddd;
     padding-bottom: 10px;
+}
+
+body.dark-mode .modal-header,
+body.dark-mode .modal-footer {
+    border-color: #333333 !important;
 }
 
 .close-btn {
